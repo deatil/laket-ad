@@ -1,0 +1,42 @@
+{
+    "name": "laket/laket-ad",
+    "description": "laket-admin 广告系统",
+    "keywords": [
+        "laket",
+        "ad",
+        "admin",
+        "laket-admin"
+    ],
+    "homepage": "https://github.com/deatil/laket-ad",
+    "type": "library",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "deatil",
+            "email": "deatil@github.com",
+            "homepage": "https://github.com/deatil",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=8.0.0",
+        "laket/laket-admin":"1.3.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Laket\\Admin\\Ad\\": "src"
+        }
+    },
+    "laket" : {
+        "title": "广告系统",
+        "version": "1.0.1",
+        "adaptation": "1.3.*"
+    },
+    "extra": {
+        "think":{
+            "services":[
+                "Laket\\Admin\\Ad\\Service"
+            ]
+        }
+    }
+}

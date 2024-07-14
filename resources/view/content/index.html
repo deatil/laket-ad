@@ -1,0 +1,179 @@
+{extend name="laket-admin::common.layout"/}
+
+{block name="main"}
+<div class="layui-card">
+    <div class="layui-card-header layui-bg-cyan">
+        广告数据
+    </div>
+    <div class="layui-card-body">
+        <blockquote class="layui-elem-quote quoteBox">
+            <form class="layui-form lake-admin-search-form" method="get">
+                <div class="layui-inline">
+                    <select name="cateid" class="lake-admin-search-cateid">
+                        <option value="">全部</option>
+                        {volist name="cate" id="vo"}
+                            <option value="{$vo.id}" {if $cateid == $vo.id}selected{/if}>{$vo.title}</option>
+                        {/volist}
+                    </select>
+                </div>
+                <div class="layui-inline">
+                    <input type="text" class="layui-input lake-admin-search-datetime" id="laydate" placeholder="搜索时间范围">
+                </div>
+                <div class="layui-inline">
+                    <input type="text" name="keyword" class="layui-input search-value lake-admin-search-value" placeholder="请输入关键词">
+                </div>
+                <div class="layui-inline">
+                    <a href="javascript:;" class="layui-btn search-btn">搜索</a>
+                </div>
+                <div class="layui-inline">
+                    <a href="javascript:;" class="layui-btn all-btn">全部</a>
+                </div>
+            </form>
+        </blockquote>
+    
+        <table class="layui-hide" id="table" lay-filter="table"></table>
+    </div>
+</div>
+{/block}
+
+{block name="script"}
+<script type="text/html" id="toolbar">
+    <div class="layui-btn-container">
+        <a 
+            href="{:laket_route('admin.ad-content.add')}?cateid={$cateid|default=0}" 
+            class="layui-btn layui-btn-sm layui-iframe" 
+            title="添加内容">添加内容</a>
+    </div>
+</script>
+<script type="text/html" id="typeTpl">
+    {{# if (d.type == '1') { }}
+        <span class="layui-badge layui-bg-cyan">图片</span>
+    {{# } }}
+        
+    {{# if (d.type == '2') { }}
+        <span class="layui-badge layui-bg-blue">链接</span>
+    {{# } }}
+        
+    {{# if (d.type == '3') { }}
+        <span class="layui-badge layui-bg-green">代码</span>
+    {{# } }}
+        
+    {{# if (d.type == '4') { }}
+        <span class="layui-badge layui-bg-orange">文字</span>
+    {{# } }}
+</script>
+<script type="text/html" id="cateTpl">
+    {{# if (d.cate != null && 'title' in d.cate) { }}
+        {{ d.cate.title }}
+    {{# } else { }}
+        --
+    {{# } }}
+</script>
+<script type="text/html" id="addTimeTpl">
+    {{ layui.util.toDateString(d.add_time * 1000) }}
+</script>
+<script type="text/html" id="statusTpl">
+    <input 
+        type="checkbox" 
+        name="status" 
+        data-href="{:laket_route('admin.ad-content.status')}?id={{d.id}}" 
+        value="{{d.id}}" 
+        lay-skin="switch" 
+        lay-text="开启|关闭" 
+        lay-filter="switchStatus" {{ d.status==1 ? 'checked' : '' }}
+        >
+</script>
+<script type="text/html" id="actionTpl">
+    <a href='{:laket_route("admin.ad-content.edit")}?id={{ d.id }}' 
+        class="layui-btn layui-btn-xs layui-iframe"
+        title="编辑内容">编辑</a>
+    <a href='{:laket_route("admin.ad-content.delete")}?id={{ d.id }}' 
+        class="layui-btn layui-btn-danger layui-btn-xs layui-tr-del">删除</a>
+</script>
+
+<script>
+layui.use(['table', 'laydate', 'notice'], function() {
+    var table = layui.table,
+        $ = layui.$,
+        laydate = layui.laydate,
+        notice = layui.notice,
+        form = layui.form;
+        
+    laydate.render({
+        elem: '#laydate',
+        range: true,
+    });
+    
+    table.render({
+        elem: '#table',
+        toolbar: '#toolbar',
+        url: '{:laket_route("admin.ad-content.index")}',
+        cols: [
+            [
+                { field: 'id', width: 80, title: 'ID', align:"center" },
+                { field: 'title', title: '内容名称' },
+                { width: 120, title: '位置', templet: '#cateTpl' },
+                { field: 'type', width: 80, title: '类型', align:"center", templet: '#typeTpl' },
+                { field: 'sort', width: 70, title: '排序', align:"center", edit: 'text' },
+                { field: 'add_time',width: 180, title: '创建时间', templet: '#addTimeTpl' },
+                { field: 'status', width: 100, title: '状态', align:"center", templet: '#statusTpl', unresize: true },
+                { fixed: 'right', title: '操作', width: 120, templet: '#actionTpl' }
+            ]
+        ],
+        page: 15,
+    });
+    
+    $(".search-btn").on("click", function() {
+        table.reload("table", {
+            page: {
+                curr: 1 //重新从第 1 页开始
+            },
+            where: {
+                cateid: $(".lake-admin-search-cateid").find("option:selected").val(),
+                search_field: 'title',
+                keyword: $(".lake-admin-search-value").val(),
+                filter_time: 'add_time',
+                filter_time_range: $(".lake-admin-search-datetime").val()
+            }
+        })
+    });
+    
+    $(".all-btn").on("click", function() {
+        $(".lake-admin-search-cateid").val(''),
+        $(".lake-admin-search-value").val(''),
+        $(".lake-admin-search-datetime").val('');
+        
+        table.reload("table", {
+            page: {
+                curr: 1
+            },
+            where: {
+                cateid: $(".lake-admin-search-cateid").find("option:selected").val(),
+                search_field: 'title',
+                keyword: $(".lake-admin-search-value").val(),
+                filter_time: 'add_time',
+                filter_time_range: $(".lake-admin-search-datetime").val()
+            }
+        })
+    });
+    
+    // 监听单元格编辑
+    table.on('edit(table)', function(obj) {
+        var value = obj.value,
+            data = obj.data;
+        
+        $.post('{:laket_route("admin.ad-content.sort")}', { 
+            'id': data.id, 
+            'value': value, 
+        }, function(data) {
+            if (data.code == 1) {
+                notice.success(data.msg);
+            } else {
+                notice.warning(data.msg);
+            }
+
+        })
+    });
+});
+</script>
+{/block}
