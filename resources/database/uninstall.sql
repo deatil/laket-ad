@@ -1,2 +1,2 @@
-DROP TABLE IF EXISTS `pre__lakead_category`;
-DROP TABLE IF EXISTS `pre__lakead_content`;
+DROP TABLE IF EXISTS `pre__ad_category`;
+DROP TABLE IF EXISTS `pre__ad_content`;

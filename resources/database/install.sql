@@ -12,7 +12,7 @@ CREATE TABLE `pre__ad_category` (
   `add_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT '' COMMENT '添加IP',
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='tags主表';
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='广告分类';
 
 DROP TABLE IF EXISTS `pre__ad_content`;
 CREATE TABLE `pre__ad_content` (
@@ -33,4 +33,4 @@ CREATE TABLE `pre__ad_content` (
   `url` text COLLATE utf8mb4_unicode_ci COMMENT '链接',
   `target` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '_self' COMMENT '跳转方式，_self-自身，_blank-跳出',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='tags主表';
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='广告内容';
